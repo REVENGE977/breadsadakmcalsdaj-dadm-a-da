@@ -3,14 +3,11 @@ const ms = require("ms");
 
 module.exports.run = async (bot, message, args) => {
 
-  //b!mute @user 1s/m/h/d
-  let role2 = "Chat-Muter";
-  let gRole2 = message.guild.roles.find(`name`, role2);
+  //+mute @user 1s/m/h/d
   let tomute = message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0]));
-          if(!message.member.roles.has(gRole2.id)) return message.channel.send("You can't do this command.");
-  if(!tomute) return message.channel.send("b!mute [User] [Time] [Reason]")
+  if(!message.member.hasPermission("MUTE_MEMBERS")) return message.reply("You Cant Use This Command");
+  if(!tomute) return message.channel.send("+mute [User] [Time] [Reason]")
 
-  if(tomute.roles.has(gRole2.id)) return message.channel.send("Can't mute that player!");
   let muterole = message.guild.roles.find(`name`, "Muted");
   //start of create role
   if(!muterole){
@@ -33,8 +30,8 @@ module.exports.run = async (bot, message, args) => {
   //end of create role
   let mutetime = args[1];
   let reason = args.slice(2).join(" ");
-  if(!mutetime) return message.channel.send("Usage: b!mute [User] [Time] [Reason].");
-  if(!reason) return message.channel.send("Usage: b!mute [User] [Time] [Reason].");
+  if(!mutetime) return message.channel.send("Usage: +mute [User] [Time] [Reason].");
+  if(!reason) return message.channel.send("Usage: +mute [User] [Time] [Reason].");
   if(tomute.roles.has(muterole.id)) return message.channel.send("That person is already muted.");
   await(tomute.addRole(muterole.id));
   let mutedEmbed = new Discord.RichEmbed()
@@ -49,6 +46,7 @@ let incidentchannel = message.guild.channels.find(`name`, "incidents");
 if(!incidentchannel) return message.channel.send("Can't find incidents channel.");
     message.delete().catch(O_o=>{});
 incidentchannel.send(mutedEmbed);
+ message.channel.send(`**Done, ${tomute} has been muted !**`)
 
   setTimeout(function(){
       if(tomute.roles.has(muterole.id)){
